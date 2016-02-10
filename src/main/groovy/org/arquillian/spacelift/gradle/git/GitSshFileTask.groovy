@@ -14,6 +14,11 @@ class GitSshFileTask extends Task<Object, File> {
 
     private File toFile
 
+    /**
+     *
+     * @param toFile file where that that script will be written, defaults to java.io.tmpdir/gitssh.sh
+     * @return
+     */
     def toFile(File toFile) {
         this.toFile = toFile
         this

@@ -9,7 +9,6 @@ class ConfigurationContainer extends InheritanceAwareContainer<ConfigurationItem
 
     ConfigurationContainer(Object parent) {
         super(parent, ConfigurationItem.class, ConfigurationItem.class)
-
     }
 
     ConfigurationContainer(ConfigurationContainer other) {
@@ -17,14 +16,14 @@ class ConfigurationContainer extends InheritanceAwareContainer<ConfigurationItem
     }
 
     @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
+    String toString() {
+        final StringBuilder builder = new StringBuilder()
 
         objects.each {
             builder.append("\t${it.name} (${it.type.resolve()})\n")
                     .append("\t\t${it.description.resolve()}\n\n")
         }
 
-        return builder.toString();
+        builder.toString()
     }
 }

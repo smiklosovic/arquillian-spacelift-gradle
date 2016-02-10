@@ -10,24 +10,22 @@ import org.junit.Test
 class ArquillianXmlUpdaterTest {
 
     @BeforeClass
-    public static void initializeSpacelift() {
+    static void initializeSpacelift() {
         Project project = ProjectBuilder.builder().build()
         project.apply plugin: 'org.arquillian.spacelift'
     }
 
     @Test
     void "modify arquillian.xml files"() {
-        Spacelift.task(
-                [foo:'bar'], ArquillianXmlUpdater)
+        Spacelift.task([foo: 'bar'], ArquillianXmlUpdater)
                 .dir(new File('.'))
                 .execute().await()
     }
 
     @Test
     void "modify arquillian.xml files with includes, excludes"() {
-        Spacelift.task(
-                [foo:'bar'], ArquillianXmlUpdater)
-                .dir(dir:new File('.'), includes:["foo/arquillian.xml"], excludes:["**/target/**"])
+        Spacelift.task([foo: 'bar'], ArquillianXmlUpdater)
+                .dir(dir: new File('.'), includes: ["foo/arquillian.xml"], excludes: ["**/target/**"])
                 .execute().await()
     }
 }

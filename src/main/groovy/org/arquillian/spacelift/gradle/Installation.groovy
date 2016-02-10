@@ -3,39 +3,40 @@ package org.arquillian.spacelift.gradle
 import org.arquillian.spacelift.task.TaskRegistry
 import org.slf4j.Logger
 
-
 /**
  * This class defines anything installable
  */
 interface Installation extends ContainerizableObject<Installation> {
 
     /**
-     * Returns product identified of the installation
-     * @return
+     *
+     * @return product identified of the installation
      */
     String getProduct()
 
     /**
-     * Returns version of the product
-     * @return
+     *
+     * @return version of the product
      */
     String getVersion()
 
     /**
-     * Returns directory where installation is installed
-     * @return
+     *
+     * @return directory where installation is installed
      */
     File getHome()
 
     /**
      * Checks whether the installation was already installed
-     * @return @{code true} if installation is already installed, @{code false} otherwise
+     *
+     * @return {@code true} if installation is already installed, {@code false} otherwise
      */
     boolean isInstalled()
 
     /**
      * Installs installation into Spacelift workspace
-     * @param logger
+     *
+     * @param logger logger which this installation will use
      */
     void install(Logger logger)
 

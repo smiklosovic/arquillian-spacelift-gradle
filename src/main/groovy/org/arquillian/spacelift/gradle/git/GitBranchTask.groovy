@@ -1,24 +1,24 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Creates a branch and sets it as a tracking branch, by default to branch 'master'. When a branch to create
- * is not set by method {@link #branch(String)}, processing of this tool does effectively nothing with repository.
+ * is not set by method {@link GitBranchTask#branch(String)}, processing of this tool does effectively nothing with repository.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitBranchTool extends Task<File, File> {
+class GitBranchTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitBranchTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitBranchTask)
 
     private String branch = null
 
@@ -28,9 +28,9 @@ class GitBranchTool extends Task<File, File> {
      * Creates a branch.
      *
      * @param branch , branch to create, null value and empty string will not be taken into consideration
-     * @return
+     * @return this
      */
-    GitBranchTool branch(String branch) {
+    GitBranchTask branch(String branch) {
         if (notNullAndNotEmpty(branch)) {
             this.branch = branch
         }
@@ -41,9 +41,9 @@ class GitBranchTool extends Task<File, File> {
      * Sets tracking branch, by default master
      *
      * @param trackingBranch , null value and empty string will be not be taken into consideration
-     * @return
+     * @return this
      */
-    GitBranchTool trackingBranch(String trackingBranch) {
+    GitBranchTask trackingBranch(String trackingBranch) {
         if (notNullAndNotEmpty(trackingBranch)) {
             this.trackingBranch = trackingBranch
         }

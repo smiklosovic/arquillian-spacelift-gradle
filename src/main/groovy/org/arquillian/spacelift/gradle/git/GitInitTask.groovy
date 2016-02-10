@@ -1,13 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Initializes repository. Initialized repository is bare.
@@ -15,9 +15,9 @@ import org.arquillian.spacelift.task.os.CommandTool
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitInitTool extends Task<File, String> {
+class GitInitTask extends Task<File, String> {
 
-    private Logger logger = Logger.getLogger(GitInitTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitInitTask)
 
     @Override
     protected String process(File repositoryDir) throws Exception {
@@ -32,6 +32,6 @@ class GitInitTool extends Task<File, String> {
             throw new ExecutionException(ex, "Unable to initialize repository at {0}", repositoryDir.getAbsolutePath())
         }
 
-        return repositoryDir.canonicalPath
+        repositoryDir.canonicalPath
     }
 }

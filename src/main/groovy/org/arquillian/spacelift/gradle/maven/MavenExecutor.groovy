@@ -6,9 +6,9 @@ import org.arquillian.spacelift.process.ProcessResult
 import org.arquillian.spacelift.task.Task
 import org.slf4j.LoggerFactory
 
-class MavenExecutor extends Task<Object, ProcessResult>{
+class MavenExecutor extends Task<Object, ProcessResult> {
 
-    def static final log = LoggerFactory.getLogger('MavenExecutor')
+    def static final log = LoggerFactory.getLogger(MavenExecutor)
 
     def projectPom
 
@@ -30,8 +30,6 @@ class MavenExecutor extends Task<Object, ProcessResult>{
 
     Map<String, String> env = [:]
 
-    private def command = []
-
     MavenExecutor() {
         def project = new GradleSpaceliftDelegate().project()
         if (new File("${project.spacelift.workspace}/settings.xml").exists()) {
@@ -49,11 +47,11 @@ class MavenExecutor extends Task<Object, ProcessResult>{
             command.parameter('-B')
         }
 
-        if(nonRecursive) {
+        if (nonRecursive) {
             command.parameter('-N')
         }
 
-        if(debug) {
+        if (debug) {
             command.parameter('-X')
         }
 
@@ -74,7 +72,7 @@ class MavenExecutor extends Task<Object, ProcessResult>{
         command.parameters(goals)
         command.parameters(getProperties())
 
-        if(workingDir) {
+        if (workingDir) {
             command.workingDir(workingDir)
         }
 
@@ -116,7 +114,7 @@ class MavenExecutor extends Task<Object, ProcessResult>{
         this
     }
 
-    def goals(CharSequence...goals) {
+    def goals(CharSequence... goals) {
         this.goals.addAll(goals)
         this
     }
@@ -126,7 +124,7 @@ class MavenExecutor extends Task<Object, ProcessResult>{
         this
     }
 
-    def properties(CharSequence...properties) {
+    def properties(CharSequence... properties) {
         this.properties.addAll(properties)
         this
     }
@@ -136,7 +134,7 @@ class MavenExecutor extends Task<Object, ProcessResult>{
         this
     }
 
-    def profiles(CharSequence...profiles) {
+    def profiles(CharSequence... profiles) {
         this.profiles.addAll(profiles)
         this
     }
@@ -147,21 +145,9 @@ class MavenExecutor extends Task<Object, ProcessResult>{
     }
 
     def env(envProperty) {
-        for(def entry:envProperty) {
+        for (def entry : envProperty) {
             this.env.put(entry.key.toString(), entry.value.toString())
         }
-        this
-    }
-
-    def androidTarget(target) {
-        // TODO identify all possible combinations for Android Target settings
-        this.properties << "arq.group.containers.container.android.configuration.target=${target}"
-        this
-    }
-
-    def jbossHome(jbossHome) {
-        this.properties << "arq.container.main-server-group.configuration.jbossHome=${jbossHome}"
-        this.properties << "arq.group.jboss.container.domain-controller.configuration.jbossHome=${jbossHome}"
         this
     }
 

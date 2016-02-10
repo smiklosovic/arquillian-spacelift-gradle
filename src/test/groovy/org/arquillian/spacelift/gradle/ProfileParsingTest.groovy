@@ -1,18 +1,17 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.is
-import static org.hamcrest.CoreMatchers.notNullValue
-import static org.junit.Assert.assertThat
-
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Ignore
 import org.junit.Test
 
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.junit.Assert.assertThat
+
 /**
- * Asserts that installations can be specified without home
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class ProfileParsingTest {
 
@@ -87,9 +86,9 @@ public class ProfileParsingTest {
     @Test
     void "single profile with single installation and single test and single excluded test as array in closure"() {
         initWithProfile {
-            enabledInstallations { ['eap']}
-            tests { ['fooTest']}
-            excludedTests { ['barTest']}
+            enabledInstallations { ['eap'] }
+            tests { ['fooTest'] }
+            excludedTests { ['barTest'] }
         }
     }
 
@@ -147,15 +146,15 @@ public class ProfileParsingTest {
     @Test
     void "single profile with multiple installations as array in closure and no tests"() {
         initWithProfile {
-            enabledInstallations { ['eap', 'ews']}
+            enabledInstallations { ['eap', 'ews'] }
         }
     }
 
     @Test
     void "single profile with single installation as array in closure and single test as array in closure"() {
         initWithProfile {
-            enabledInstallations { ['eap']}
-            tests { ['fooTest']}
+            enabledInstallations { ['eap'] }
+            tests { ['fooTest'] }
         }
     }
 

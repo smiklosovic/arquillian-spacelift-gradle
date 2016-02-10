@@ -34,7 +34,9 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
 
     DeferredValue<Void> postActions = DeferredValue.of(Void.class)
 
-    DeferredValue<String> remoteUrl = DeferredValue.of(String.class).from({ "http://www.eu.apache.org/dist/maven/maven-3/${version}/binaries/apache-maven-${version}-bin.zip" })
+    DeferredValue<String> remoteUrl = DeferredValue.of(String.class).from({
+        "http://www.eu.apache.org/dist/maven/maven-3/${version}/binaries/apache-maven-${version}-bin.zip"
+    })
 
     DeferredValue<String> fileName = DeferredValue.of(String.class).from({ "apache-maven-${version}-bin.zip" })
 
@@ -136,7 +138,7 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
 
         if (targetFile.exists()) {
             logger.info(":install:${name} Grabbing ${getFileName()} from file system cache")
-        } else if(getRemoteUrl()!=null){
+        } else if (getRemoteUrl() != null) {
             // ensure parent directory exists
             targetFile.getParentFile().mkdirs()
 
@@ -146,9 +148,9 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
         }
 
         logger.info(":install:${name} Extracting installation from ${getFileName()}")
-        Spacelift.task(getFsPath(),UnzipTool).toDir(((File)getHome()).parentFile.canonicalFile).execute().await()
+        Spacelift.task(getFsPath(), UnzipTool).toDir(((File) getHome()).parentFile.canonicalFile).execute().await()
 
-        new GradleSpaceliftDelegate().project().getAnt().invokeMethod("chmod", [dir: "${getHome()}/bin", perm:"a+x", includes:"*"])
+        new GradleSpaceliftDelegate().project().getAnt().invokeMethod("chmod", [dir: "${getHome()}/bin", perm: "a+x", includes: "*"])
     }
 
     @Override
@@ -156,14 +158,14 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
 
         final String mavenAlias = getAlias()
 
-        registry.register(MavenTool, new TaskFactory(){
+        registry.register(MavenTool, new TaskFactory() {
             Task create() {
                 Task task = new MavenTool()
                 task.executionService = Spacelift.service()
                 return task
             }
 
-            Collection aliases() { [ mavenAlias ]}
+            Collection aliases() { [mavenAlias] }
         })
 
         final String settingsXmlAlias = "settings-${mavenAlias}"
@@ -175,20 +177,19 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
                 return task
             }
 
-            Collection aliases() { [ settingsXmlAlias ]}
+            Collection aliases() { [settingsXmlAlias] }
         })
-
 
         // create settings.xml with local repository
         SettingsXmlUpdater createSettings = (SettingsXmlUpdater) Spacelift.task(settingsXmlAlias)
 
-        if(isEnableJBossStaging()) {
+        if (isEnableJBossStaging()) {
             // here it is named logger, because it is a part of Plugin<Project> implementation
             log.info("JBoss Staging repository will be enabled for ${name}")
             createSettings.repository("jboss-staging-repository-group", new URI("https://repository.jboss.org/nexus/content/groups/staging"), true)
         }
 
-        if(isEnableJBossSnapshots()) {
+        if (isEnableJBossSnapshots()) {
             // here it is named logger, because it is a part of Plugin<Project> implementation
             log.info("JBoss Snapshots repository will be enabled for ${name}")
             createSettings.repository("jboss-snapshots-repository", new URI("https://repository.jboss.org/nexus/content/repositories/snapshots"), true).execute().await()
@@ -214,21 +215,22 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
     class MavenTool extends CommandTool {
 
         DeferredValue<List> nativeCommand = DeferredValue.of(List).ownedBy(this).from([
-                linux: { ["${home}/bin/mvn"]},
-                mac: { ["${home}/bin/mvn"]},
+                linux  : { ["${home}/bin/mvn"] },
+                mac    : { ["${home}/bin/mvn"] },
                 windows: {
                     [
                             "cmd.exe",
                             "/C",
                             "${home}/bin/mvn.cmd"
-                    ]},
-                solaris: {[ "${home}/bin/mvn" ]}
+                    ]
+                },
+                solaris: { ["${home}/bin/mvn"] }
         ])
 
         MavenTool() {
             super()
             List command = nativeCommand.resolve()
-            def parameters = System.getenv("TRAVIS") != null ? [ "-B", "-q" ] : []
+            def parameters = System.getenv("TRAVIS") != null ? ["-B", "-q"] : []
             parameters.addAll(["-s", getSettingsXml().getCanonicalPath()])
             parameters.add("-Dorg.apache.maven.user-settings=${getSettingsXml().getCanonicalPath()}")
 
@@ -365,7 +367,8 @@ class MavenInstallation extends BaseContainerizableObject<MavenInstallation> imp
             settings.children().add(0, new Node(null, 'localRepository', "${getLocalRepository().getCanonicalPath()}"))
 
             Spacelift.task(settings, XmlUpdater).file(getSettingsXml()).execute().await()
-            return null;
+
+            null
         }
     }
 }

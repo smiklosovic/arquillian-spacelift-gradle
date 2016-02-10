@@ -3,6 +3,7 @@ package org.arquillian.spacelift.gradle
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.gradle.configuration.ConfigurationContainer
 import org.arquillian.spacelift.gradle.configuration.ConfigurationItem
+import org.arquillian.spacelift.task.DefaultGradleTask
 import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory
  *
  */
 class SpaceliftExtension {
+
     private static final Logger logger = LoggerFactory.getLogger(SpaceliftExtension)
 
     // FIXME, workspace and cacheDir should be provided by Arquillian Spacelift itself

@@ -1,10 +1,10 @@
 package org.arquillian.spacelift.gradle.text
 
-import static org.junit.Assert.*
-import static org.hamcrest.CoreMatchers.*
-
 import org.arquillian.spacelift.Spacelift
 import org.junit.Test
+
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
 
 class ProcessTemplateTest {
 
@@ -51,11 +51,10 @@ class ProcessTemplateTest {
 
         assertThat output.text, is('Hello world from Spacelift!')
     }
+
     File createTemplate(String content) {
         File output =  File.createTempFile("spacelift-tmp-test", null)
-        output.withWriter('UTF-8') { out ->
-            out << content
-        }
-        return output
+        output.withWriter('UTF-8') { out -> out << content }
+        output
     }
 }

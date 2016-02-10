@@ -1,13 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Removes files from repository.
@@ -15,9 +15,9 @@ import org.arquillian.spacelift.task.os.CommandTool
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitRemoveTool extends Task<File, File> {
+class GitRemoveTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitRemoveTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitRemoveTask)
 
     private boolean force
 
@@ -29,9 +29,9 @@ class GitRemoveTool extends Task<File, File> {
 
     /**
      * Turns {@plain -f} flag on.
-     * @return
+     * @return this
      */
-    GitRemoveTool force() {
+    GitRemoveTask force() {
         force = true
         this
     }
@@ -39,9 +39,9 @@ class GitRemoveTool extends Task<File, File> {
     /**
      * Turns {@plain -r} flag on.
      *
-     * @return
+     * @return this
      */
-    GitRemoveTool recursive() {
+    GitRemoveTask recursive() {
         recursive = true
         this
     }
@@ -49,9 +49,9 @@ class GitRemoveTool extends Task<File, File> {
     /**
      * Turns {@plain -q} flag on.
      *
-     * @return
+     * @return this
      */
-    GitRemoveTool quiet() {
+    GitRemoveTask quiet() {
         quiet = true
         this
     }
@@ -59,9 +59,9 @@ class GitRemoveTool extends Task<File, File> {
     /**
      *
      * @param file file to remove, null values or nonexisting files are not taken into consideration
-     * @return
+     * @return this
      */
-    GitRemoveTool remove(File file) {
+    GitRemoveTask remove(File file) {
         if (notNullAndExists(file)) {
             toRemove.add(file)
         }
@@ -71,9 +71,9 @@ class GitRemoveTool extends Task<File, File> {
     /**
      *
      * @param files files to remove, null values or nonexisting files are not taken into consideration
-     * @return
+     * @return this
      */
-    GitRemoveTool remove(List<File> files) {
+    GitRemoveTask remove(List<File> files) {
         for (File f : files) {
             remove(f)
         }
@@ -104,14 +104,13 @@ class GitRemoveTool extends Task<File, File> {
 
             // The file has to exist and its path has to start with repository path meaning the file is in the repository
             if (!notNullAndExists(file) || !file.getCanonicalPath().startsWith(repositoryDir.getCanonicalPath())) {
-                logger.warning("Skipping file $file because it is not in the repository.")
+                logger.warn("Skipping file $file because it is not in the repository.")
                 continue
             }
 
             commandBuilder.parameter(file.getAbsolutePath())
         }
 
-        // FIXME, remove?
         Command command = commandBuilder.build()
 
         logger.info(command.toString())
@@ -122,7 +121,7 @@ class GitRemoveTool extends Task<File, File> {
             throw new ExecutionException(ex, "Could not remove files with command {0}.", command.toString())
         }
 
-        return repositoryDir
+        repositoryDir
     }
 
     private boolean notNullAndExists(File value) {

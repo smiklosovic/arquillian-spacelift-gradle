@@ -1,7 +1,5 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
@@ -9,18 +7,21 @@ import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
 
+import java.util.logging.Logger
+
 /**
  * Fetches branches from remote repository.
  * <p>
- * When {@link #remote(String)} and {@link #branch(String)} are not set, we fetch all remote branches (git fetch --all).
+ * When {@link GitFetchTask#remote(String)} and {@link GitFetchTask#branch(String)} are not set, we fetch all remote
+ * branches (git fetch --all).
  * </p>
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitFetchTool extends Task<File, File> {
+class GitFetchTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitFetchTool.class.getName())
+    private Logger logger = Logger.getLogger(GitFetchTask.class.getName())
 
     private String remote
 
@@ -33,9 +34,9 @@ class GitFetchTool extends Task<File, File> {
     /**
      *
      * @param remote , e.g. "origin"
-     * @return
+     * @return this
      */
-    GitFetchTool remote(String remote) {
+    GitFetchTask remote(String remote) {
         if (notNullAndNotEmpty(remote)) {
             this.remote = remote
         }
@@ -45,9 +46,9 @@ class GitFetchTool extends Task<File, File> {
     /**
      *
      * @param branch branch from remote to fetch, e.g "myBranch"
-     * @return
+     * @return this
      */
-    GitFetchTool branch(String branch) {
+    GitFetchTask branch(String branch) {
         if (notNullAndNotEmpty(branch)) {
             this.branch = branch
         }
@@ -60,7 +61,7 @@ class GitFetchTool extends Task<File, File> {
      * @param local name of branch which will be fetched from {@link #remote(String)} from branch {@link #branch(String)}
      * @return
      */
-    GitFetchTool local(String local) {
+    GitFetchTask local(String local) {
         if (notNullAndNotEmpty(local)) {
             this.local = local
         }
@@ -72,7 +73,7 @@ class GitFetchTool extends Task<File, File> {
      * @param gitSsh file to use as GIT_SSH script, skipped when it does not exist, it is not a file or is a null object
      * @return
      */
-    GitFetchTool gitSsh(File gitSsh) {
+    GitFetchTask gitSsh(File gitSsh) {
         if (gitSsh && gitSsh.exists() && gitSsh.isFile() && gitSsh.canExecute()) {
             this.gitSsh = gitSsh
         }

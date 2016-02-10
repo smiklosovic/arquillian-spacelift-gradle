@@ -1,18 +1,15 @@
-package org.arquillian.spacelift.gradle;
-
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
+package org.arquillian.spacelift.gradle
 
 import org.arquillian.spacelift.Spacelift
+import org.arquillian.spacelift.gradle.utils.KillJavas
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.arquillian.spacelift.gradle.utils.KillJavas
 import org.junit.Test
 
-public class KillJavasTest {
+class KillJavasTest {
 
     @Test
-    public void killJavas() {
+    void killJavas() {
         Project project = ProjectBuilder.builder().build()
 
         project.apply plugin: 'org.arquillian.spacelift'

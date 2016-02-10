@@ -1,7 +1,5 @@
 package org.arquillian.spacelift.gradle
 
-import org.gradle.api.Project
-
 /**
  * An object that can be put into {@link InheritanceAwareContainer}
  *
@@ -11,7 +9,7 @@ import org.gradle.api.Project
  *
  * @author kpiwko
  *
- * @param <REAL_TYPE>
+ * @param < REAL_TYPE >
  */
 interface ContainerizableObject<REAL_TYPE extends ContainerizableObject<REAL_TYPE>> extends Cloneable {
 

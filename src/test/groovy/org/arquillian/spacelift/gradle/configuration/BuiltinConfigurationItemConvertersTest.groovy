@@ -1,15 +1,6 @@
 package org.arquillian.spacelift.gradle.configuration
 
-import groovy.mock.interceptor.MockFor
-import groovy.mock.interceptor.StubFor
-import org.arquillian.spacelift.gradle.GradleSpaceliftDelegate
-import org.arquillian.spacelift.gradle.SpaceliftExtension
-import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
-
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 
 import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.CoreMatchers.nullValue

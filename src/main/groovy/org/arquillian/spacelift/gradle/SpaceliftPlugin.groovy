@@ -1,10 +1,9 @@
 package org.arquillian.spacelift.gradle
 
 import org.arquillian.spacelift.Spacelift
+import org.arquillian.spacelift.gradle.configuration.BuiltinConfigurationItemConverters
 import org.arquillian.spacelift.gradle.configuration.ConfigurationItem
 import org.arquillian.spacelift.gradle.configuration.IllegalConfigurationException
-
-import org.arquillian.spacelift.gradle.configuration.BuiltinConfigurationItemConverters
 import org.arquillian.spacelift.gradle.utils.KillJavas
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -18,17 +17,15 @@ class SpaceliftPlugin implements Plugin<Project> {
      */
     static void installInstallation(Installation installation, Logger logger) {
 
-        if(installation.isInstalled()) {
+        if (installation.isInstalled()) {
             logger.lifecycle(":install:${installation.name} was already installed, registering tools")
-        }
-        else {
+        } else {
             logger.lifecycle(":install:${installation.name} will be installed")
             installation.install(logger)
             logger.lifecycle(":install:${installation.name} is now installed, registering tools")
         }
         installation.registerTools(Spacelift.registry())
     }
-
 
     // this plugin prepares Arquillian Spacelift environment
     void apply(Project project) {
@@ -43,7 +40,7 @@ class SpaceliftPlugin implements Plugin<Project> {
         // * project.selectedProfile
         // * project.selectedInstallations
         // * project.selectedTests
-        project.getTasks().create(name:"init") { task ->
+        project.getTasks().create(name: "init") { task ->
             description "Initialize Spacelift environment"
             group "Spacelift"
             task << {
@@ -53,22 +50,21 @@ class SpaceliftPlugin implements Plugin<Project> {
                 // check for -Pprofile=profileName and then for Mavenism -PprofileName
                 // fallback to default if not defined
                 def profileName = 'default'
-                if(project.hasProperty('profile')){
+                if (project.hasProperty('profile')) {
                     profileName = project.profile
-                }
-                else {
+                } else {
                     try {
                         // try to find profile by Maven based -PprofileName
                         profileName = project.spacelift.profiles.find { p -> project.hasProperty(p.name) }.name
                     }
-                    catch(NullPointerException e) {
+                    catch (NullPointerException e) {
                         logger.warn(":init: Please select profile by -Pprofile=name, now using default")
                     }
                 }
 
                 // find if such profile is available
                 def profile = project.spacelift.profiles.find { p -> p.name == profileName }
-                if(profile==null) {
+                if (profile == null) {
                     def availableProfiles = project.spacelift.profiles.collect { it.name }.join(', ')
                     throw new GradleException("Unable to find ${profileName} profile in build.gradle file, available profiles were: ${availableProfiles}")
                 }
@@ -83,21 +79,18 @@ class SpaceliftPlugin implements Plugin<Project> {
                 // find installations that were specified by profile or enabled manually from command line
                 def installations = []
                 def installationNames = []
-                if(project.hasProperty('installations')) {
+                if (project.hasProperty('installations')) {
                     installationNames = project.installations.split(',').findAll { return !it.isEmpty() }
-                }
-                else if(profile.enabledInstallations==null) {
+                } else if (profile.enabledInstallations == null) {
                     installationNames = []
-                }
-                else if(profile.enabledInstallations.contains('*')) {
-                    installationNames = project.spacelift.installations.collect(new ArrayList()) {installation -> installation.name}
-                }
-                else {
+                } else if (profile.enabledInstallations.contains('*')) {
+                    installationNames = project.spacelift.installations.collect(new ArrayList()) { installation -> installation.name }
+                } else {
                     installationNames = profile.enabledInstallations
                 }
                 installations = installationNames.inject(new ArrayList()) { list, installationName ->
                     def installation = project.spacelift.installations[installationName]
-                    if(installation) {
+                    if (installation) {
                         logger.info(":init: Installation ${installationName} will be installed.")
                         list << installation
                         return list
@@ -111,27 +104,22 @@ class SpaceliftPlugin implements Plugin<Project> {
 
                 // find tests that were specified by profile or enabled manually from command line
                 def testNames = []
-                if(project.hasProperty('tests')) {
+                if (project.hasProperty('tests')) {
                     testNames = project.tests.split(',').findAll { return !it.isEmpty() }
-                }
-                else if(profile.tests==null) {
+                } else if (profile.tests == null) {
                     testNames = []
-                }
-                else if(profile.tests.contains('*')) {
-                    testNames = project.spacelift.tests.collect(new ArrayList()) {test -> test.name}
-                }
-                else {
+                } else if (profile.tests.contains('*')) {
+                    testNames = project.spacelift.tests.collect(new ArrayList()) { test -> test.name }
+                } else {
                     testNames = profile.tests
                 }
 
                 def excludedTestNames = []
                 if (project.hasProperty('excludedTests')) {
                     excludedTestNames = project.excludedTests.split(',').findAll { return !it.isEmpty() }
-                }
-                else if (profile.excludedTests == null) {
+                } else if (profile.excludedTests == null) {
                     excludedTestNames = []
-                }
-                else {
+                } else {
                     excludedTestNames = profile.excludedTests
                 }
 
@@ -139,7 +127,7 @@ class SpaceliftPlugin implements Plugin<Project> {
 
                 def tests = testsToExecute.inject(new ArrayList()) { list, testName ->
                     def test = project.spacelift.tests[testName]
-                    if(test) {
+                    if (test) {
                         logger.info(":init: Selected test ${testName} will be tested (if task 'test' is run).")
                         list << test
                         return list
@@ -153,7 +141,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"describe") { task ->
+        project.getTasks().create(name: "describe") { task ->
             description "Show more information about this Spacelift project"
             group "Spacelift"
             task << {
@@ -166,7 +154,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"assemble", dependsOn:["init"]) { task ->
+        project.getTasks().create(name: "assemble", dependsOn: ["init"]) { task ->
             description "Fetches and installs environment required for test execution"
             group "Spacelift"
             task << {
@@ -174,7 +162,7 @@ class SpaceliftPlugin implements Plugin<Project> {
 
                 ant.mkdir(dir: "${project.spacelift.workspace}")
 
-                if(project.spacelift.isKillServers()) {
+                if (project.spacelift.isKillServers()) {
                     Spacelift.task(KillJavas).execute().await()
                 }
 
@@ -184,7 +172,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"test", dependsOn:["assemble"]) { task ->
+        project.getTasks().create(name: "test", dependsOn: ["assemble"]) { task ->
             description "Executes Spacelift defined tests"
             group "Spacelift"
             task << {
@@ -195,7 +183,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"testreport", dependsOn:["assemble"]) { task ->
+        project.getTasks().create(name: "testreport", dependsOn: ["assemble"]) { task ->
             description "Collects all tests results into single JUnit report"
             group "Spacelift"
             task << {
@@ -204,8 +192,8 @@ class SpaceliftPlugin implements Plugin<Project> {
                 ant.mkdir(dir: "${project.spacelift.workspace}/test-reports")
                 ant.mkdir(dir: "${project.spacelift.workspace}/test-reports/html")
                 ant.taskdef(name: 'junitreport',
-                classname: 'org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator',
-                classpath: project.configurations.junitreport.asPath)
+                        classname: 'org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator',
+                        classpath: project.configurations.junitreport.asPath)
                 ant.junitreport(todir: "${project.spacelift.workspace}/test-reports") {
                     fileset(dir: "${project.spacelift.workspace}") {
                         include(name: "**/TEST*.xml")
@@ -219,7 +207,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"cleanWorkspace", dependsOn:["init"]) { task ->
+        project.getTasks().create(name: "cleanWorkspace", dependsOn: ["init"]) { task ->
             description "Cleans Spacelift workspace"
             group "Spacelift"
             task << {
@@ -228,7 +216,7 @@ class SpaceliftPlugin implements Plugin<Project> {
             }
         }
 
-        project.getTasks().create(name:"cleanCache", dependsOn:["init"]) { task ->
+        project.getTasks().create(name: "cleanCache", dependsOn: ["init"]) { task ->
             description "Cleans selected Spacelift installations from cache and installation location"
             group "Spacelift"
             task << {
@@ -237,7 +225,7 @@ class SpaceliftPlugin implements Plugin<Project> {
                     // delete installation cache
                     ant.delete(file: installation.fileName, failonerror: false)
                     // delete installation only if it is not workspace
-                    if(installation.home.canonicalPath!=project.spacelift.workspace.canonicalPath) {
+                    if (installation.home.canonicalPath != project.spacelift.workspace.canonicalPath) {
                         ant.delete(dir: installation.home, failonerror: false)
                     }
                 }
@@ -246,20 +234,20 @@ class SpaceliftPlugin implements Plugin<Project> {
 
         // task aliases and aggregators
 
-        project.getTasks().create(name:"cleanAll", dependsOn:[
-            "cleanCache",
-            "cleanWorkspace",
+        project.getTasks().create(name: "cleanAll", dependsOn: [
+                "cleanCache",
+                "cleanWorkspace",
         ]) {
             description "Cleans Spacelift workspace and selected installations from Spacelift cache and installation location"
             group "Spacelift"
         }
 
-        project.getTasks().create(name:"check", dependsOn:["test"]) {
+        project.getTasks().create(name: "check", dependsOn: ["test"]) {
             description "Alias for test task"
             group "Spacelift"
         }
 
-        project.getTasks().create(name:"prepare-env", dependsOn:["assemble"]) {
+        project.getTasks().create(name: "prepare-env", dependsOn: ["assemble"]) {
             description "Alias for assemble task"
             group "Spacelift"
         }
@@ -276,25 +264,25 @@ class SpaceliftPlugin implements Plugin<Project> {
             def profileItem = configurationItems.find { ConfigurationItem<?> profileItem ->
                 profileItem.name.equals(item.name)
             }
-            if(profileItem == null) {
+            if (profileItem == null) {
                 configurationItems.add(item);
-            } else if(!item.type.resolve().isAssignableFrom(profileItem.type.resolve())) {
+            } else if (!item.type.resolve().isAssignableFrom(profileItem.type.resolve())) {
                 throw IllegalConfigurationException.incompatibleOverride(item, profileItem)
             }
         }
 
-        // Sorting alphabetically helps with log readability
+        // Sorting alphabetically helps with logger readability
         configurationItems.sort(false) { ConfigurationItem<?> a, ConfigurationItem<?> b ->
             a.name.compareTo(b.name)
         }.each { ConfigurationItem<?> item ->
             // If the project has property with this name, it was probably an input from the command line
-            if(project.hasProperty(item.name)) {
-                if(item.isSet()) {
+            if (project.hasProperty(item.name)) {
+                if (item.isSet()) {
                     throw new IllegalStateException("Value for property ${item.name} was already set in build.gradle file. You cannot override it.")
                 } else {
                     def stringValue = project.property(item.name) as String
 
-                    if(!item.isConverterSet()) {
+                    if (!item.isConverterSet()) {
                         item.converter.from(BuiltinConfigurationItemConverters.getConverter(item.type.resolve()))
                     }
 

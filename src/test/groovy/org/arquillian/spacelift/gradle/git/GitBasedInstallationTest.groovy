@@ -1,18 +1,18 @@
 package org.arquillian.spacelift.gradle.git
 
 import org.arquillian.spacelift.Spacelift
-import org.arquillian.spacelift.gradle.SpaceliftPlugin
-
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.gradle.Installation
+import org.arquillian.spacelift.gradle.SpaceliftPlugin
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.junit.Assert.assertThat
 
 class GitBasedInstallationTest {
 

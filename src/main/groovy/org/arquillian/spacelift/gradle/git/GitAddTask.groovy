@@ -1,13 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Adds files to repository.
@@ -15,9 +15,9 @@ import org.arquillian.spacelift.task.os.CommandTool
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitAddTool extends Task<File, File> {
+class GitAddTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitAddTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitAddTask)
 
     private List<File> addings = new ArrayList<File>()
 
@@ -25,9 +25,9 @@ class GitAddTool extends Task<File, File> {
      * Resource to add. Null value and non existing file will be skipped from adding.
      *
      * @param file file to add
-     * @return
+     * @return this
      */
-    GitAddTool add(File file) {
+    GitAddTask add(File file) {
 
         if (notNullAndExists(file)) {
             addings.add(file)
@@ -40,9 +40,9 @@ class GitAddTool extends Task<File, File> {
      * Resources to add. Null values and non existing files will be skipped from adding.
      *
      * @param files files to add
-     * @return
+     * @return this
      */
-    GitAddTool add(List<File> files) {
+    GitAddTask add(List<File> files) {
 
         for (File f : files) {
             add(f)
@@ -68,7 +68,7 @@ class GitAddTool extends Task<File, File> {
 
             // The file has to exist and its path has to start with repository path meaning the file is in the repository
             if (!notNullAndExists(file) || !file.getCanonicalPath().startsWith(repositoryDir.getCanonicalPath())) {
-                logger.warning("Skipping file $file because it is not in the repository.")
+                logger.warn("Skipping file $file because it is not in the repository.")
                 continue
             }
 

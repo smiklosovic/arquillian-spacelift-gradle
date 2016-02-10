@@ -1,13 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Clones repository as chained input to specified destination.
@@ -19,9 +19,9 @@ import org.arquillian.spacelift.task.os.CommandTool
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitCloneTool extends Task<String, File> {
+class GitCloneTask extends Task<String, File> {
 
-    private Logger logger = Logger.getLogger(GitCloneTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitCloneTask)
 
     private File destination = null
 
@@ -30,18 +30,18 @@ class GitCloneTool extends Task<String, File> {
     /**
      *
      * @param destination destination where to clone a repository
-     * @return
+     * @return this
      */
-    GitCloneTool destination(String destination) {
+    GitCloneTask destination(String destination) {
         this.destination(new File(destination))
     }
 
     /**
      *
      * @param destination destination where to clone a repository
-     * @return
+     * @return this
      */
-    GitCloneTool destination(File destination) {
+    GitCloneTask destination(File destination) {
         this.destination = destination.getCanonicalFile()
         this
     }
@@ -51,7 +51,7 @@ class GitCloneTool extends Task<String, File> {
      * @param gitSsh file to use as GIT_SSH script, skipped when it does not exist, it is not a file or is a null object
      * @return
      */
-    GitCloneTool gitSsh(File gitSsh) {
+    GitCloneTask gitSsh(File gitSsh) {
         if (gitSsh && gitSsh.exists() && gitSsh.isFile() && gitSsh.canExecute()) {
             this.gitSsh = gitSsh
         }
@@ -68,23 +68,23 @@ class GitCloneTool extends Task<String, File> {
         if (!destination.exists()) {
             if (!destination.mkdirs()) {
                 throw new IllegalStateException(
-                String.format("Directory to clone repository (%s) into does not exist and it is unable to create it: %s", repository, destination.getAbsolutePath()))
+                        String.format("Directory to clone repository (%s) into does not exist and it is unable to create it: %s", repository, destination.getAbsolutePath()))
             }
         }
 
         if (!destination.isDirectory()) {
             throw new IllegalStateException(
-            String.format("Directory you want to clone repository (%s) into is not a directory: %s", repository, destination.getAbsolutePath()))
+                    String.format("Directory you want to clone repository (%s) into is not a directory: %s", repository, destination.getAbsolutePath()))
         }
 
         if (!destination.canWrite()) {
             throw new IllegalStateException(String.format("Directory (%s) you want to clone repository (%s) into has to be writable.",
-            destination, repository))
+                    destination, repository))
         }
 
         if (destination.list().length != 0) {
             throw new IllegalStateException(
-            String.format("Directory you want to clone repository (%s) into is not empty: %s", repository, destination.getAbsolutePath()))
+                    String.format("Directory you want to clone repository (%s) into is not empty: %s", repository, destination.getAbsolutePath()))
         }
 
         Command command = new CommandBuilder("git").parameters("clone", getAddress(repository), destination.getAbsolutePath()).build()
@@ -101,7 +101,7 @@ class GitCloneTool extends Task<String, File> {
             clone.execute().await()
         } catch (ExecutionException ex) {
             throw new ExecutionException(ex, "Unable to clone {0} to {1}.", repository,
-            destination.getAbsolutePath())
+                    destination.getAbsolutePath())
         }
 
         destination

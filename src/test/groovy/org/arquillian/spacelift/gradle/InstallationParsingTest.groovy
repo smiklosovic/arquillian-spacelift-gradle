@@ -1,18 +1,16 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 
-import org.arquillian.spacelift.gradle.SpaceliftPlugin
+import static org.hamcrest.CoreMatchers.*
+import static org.junit.Assert.assertThat
 
 /**
- * Asserts that installations can be specified without home
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * Asserts that installations can be specified without home.
  *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class InstallationParsingTest {
 

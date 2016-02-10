@@ -1,10 +1,9 @@
 package org.arquillian.spacelift.gradle
 
 import groovy.transform.CompileStatic
-
-import org.gradle.api.Project
 import org.slf4j.Logger
 
+import static org.junit.Assert.assertNotNull
 
 @CompileStatic
 class MyOwnTestDefinition extends BaseContainerizableObject<MyOwnTestDefinition> implements Test {
@@ -21,13 +20,13 @@ class MyOwnTestDefinition extends BaseContainerizableObject<MyOwnTestDefinition>
     }
 
     @Override
-    public MyOwnTestDefinition clone(String name) {
-        return new MyOwnTestDefinition(name, this)
+    MyOwnTestDefinition clone(String name) {
+        new MyOwnTestDefinition(name, this)
     }
 
     @Override
-    public void executeTest(Logger logger) {
+    void executeTest(Logger logger) {
         Object value = myDSL.resolve()
-        assert value != null
+        assertNotNull value
     }
 }

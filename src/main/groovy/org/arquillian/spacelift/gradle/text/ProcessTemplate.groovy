@@ -30,13 +30,11 @@ class ProcessTemplate extends Task<File, File> {
             // create nested structure if key is using dot syntax so we can reference values via GStringImpl
             List<String> subkeys = key.toString().split('\\.')
             subkeys.eachWithIndex { subkey, i ->
-                if(i==subkeys.size()-1) {
+                if (i == subkeys.size() - 1) {
                     nested.put(subkey, value)
-                }
-                else if(nested.containsKey(subkey)) {
+                } else if (nested.containsKey(subkey)) {
                     nested = nested.get(subkey)
-                }
-                else {
+                } else {
                     Map toNest = new LinkedHashMap()
                     nested.put(subkey, toNest)
                     nested = toNest
@@ -50,7 +48,7 @@ class ProcessTemplate extends Task<File, File> {
     @Override
     protected File process(File input) throws Exception {
 
-        if(input==null || !input.exists() || !input.canRead()) {
+        if (input == null || !input.exists() || !input.canRead()) {
             throw new IllegalArgumentException("Input file (${input ? input.canonicalPath : 'null'}) must exists and be readable")
         }
 

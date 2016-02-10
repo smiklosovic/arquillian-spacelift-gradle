@@ -1,24 +1,24 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
- * Tags repository with {@link #tag(String)}. You can tag particular commit with {@link #commit(String)}. Deletion of tag
- * is done by {@link #delete}, forcing by {@link #force} flags. You can not use force and delete flags together.
+ * Tags repository with {@link #tag(String)}. You can tag particular commit with {@link GitTagTask#commit(String)}.
+ * Deletion of tag is done by {@link GitTagTask#delete()}, forcing by {@link GitTagTask#force} flags. You can not use force and delete flags together.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitTagTool extends Task<File, File> {
+class GitTagTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitTagTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitTagTask)
 
     private boolean delete
 
@@ -28,12 +28,12 @@ class GitTagTool extends Task<File, File> {
 
     private String tag = "unknown tag"
 
-    GitTagTool delete() {
+    GitTagTask delete() {
         delete = true
         this
     }
 
-    GitTagTool force() {
+    GitTagTask force() {
         force = true
         this
     }
@@ -41,16 +41,21 @@ class GitTagTool extends Task<File, File> {
     /**
      *
      * @param commit hash of commit you want to tag, null values and empty strings are not taken into consideration.
-     * @return
+     * @return this
      */
-    GitTagTool commit(String commit) {
+    GitTagTask commit(String commit) {
         if (notNullAndNotEmpty(commit)) {
             this.commit = commit
         }
         this
     }
 
-    GitTagTool tag(String tag) {
+    /**
+     *
+     * @param tag tag itself
+     * @return this
+     */
+    GitTagTask tag(String tag) {
         this.tag = tag
         this
     }

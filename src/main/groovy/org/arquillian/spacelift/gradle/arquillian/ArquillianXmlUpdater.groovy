@@ -9,7 +9,8 @@ import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ArquillianXmlUpdater extends Task<Object, Void>{
+class ArquillianXmlUpdater extends Task<Object, Void> {
+
     private static final Logger log = LoggerFactory.getLogger(ArquillianXmlUpdater)
 
     Set<File> arquillianXmlFiles = new LinkedHashSet<File>()
@@ -28,7 +29,7 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
      * Calls dir(Map) with default includes and excludes patterns
      */
     ArquillianXmlUpdater dir(Object directory) {
-        dir(dir:directory)
+        dir(dir: directory)
     }
 
     /**
@@ -42,17 +43,19 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
     ArquillianXmlUpdater dir(Map args) {
 
         def dir = args.get('dir')
+
         def includes = args.get('includes', [
-            "**/arquillian.xml",
-            "**/arquillian-domain.xml"
+                "**/arquillian.xml",
+                "**/arquillian-domain.xml"
         ])
+
         def excludes = args.get('excludes', [
-            ".*-repository/**",
-            "**/target/**"
+                ".*-repository/**",
+                "**/target/**"
         ])
 
         // skip if directory is invalid or non existing
-        if(dir==null) {
+        if (dir == null) {
             return this
         }
 
@@ -68,7 +71,7 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
         this
     }
 
-    ArquillianXmlUpdater containers(CharSequence...containers) {
+    ArquillianXmlUpdater containers(CharSequence... containers) {
         this.containers.addAll(containers)
         this
     }
@@ -78,7 +81,7 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
         this
     }
 
-    ArquillianXmlUpdater extensions(CharSequence...extensions) {
+    ArquillianXmlUpdater extensions(CharSequence... extensions) {
         this.extensions.addAll(extensions)
         this
     }
@@ -92,15 +95,15 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
     @Override
     protected Void process(Object properties) throws Exception {
 
-        if(!containers.isEmpty()) {
+        if (!containers.isEmpty()) {
             configureContainer(containers, properties);
         }
 
-        if(!extensions.isEmpty()) {
+        if (!extensions.isEmpty()) {
             configureExtension(extensions, properties);
         }
 
-        return null;
+        null
     }
 
     def configureContainer(def containers, def properties) {
@@ -117,24 +120,25 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
             log.debug("Modifying container \"*${container}*\" configuration(s) in ${arquillianXml}")
 
             // replace standalone <container>s
-            arquillian.container.findAll {c -> c.@qualifier.contains(container)}.configuration.each { configuration ->
+            arquillian.container.findAll { c -> c.@qualifier.contains(container) }.configuration.each { configuration ->
                 properties.each { key, value ->
                     // remove existing properties
-                    configuration.property.findAll { p -> p.@name == "${key}"}.each { it.replaceNode {}}
+                    configuration.property.findAll { p -> p.@name == "${key}" }.each { it.replaceNode {} }
                     // put new configuration properties
                     configuration*.append(new Node(null, 'property', [name: "${key}"], "${value}"))
                 }
             }
             // replace containers in <group>
-            arquillian.group.container.findAll {c -> c.@qualifier.contains(container)}.configuration.each { configuration ->
+            arquillian.group.container.findAll { c -> c.@qualifier.contains(container) }.configuration.each { configuration ->
                 properties.each { key, value ->
                     // remove existing properties
-                    configuration.property.findAll { p -> p.@name == "${key}"}.each { it.replaceNode {} }
+                    configuration.property.findAll { p -> p.@name == "${key}" }.each { it.replaceNode {} }
                     // put new configuration properties
                     configuration*.append(new Node(null, 'property', [name: "${key}"], "${value}"))
                 }
             }
         }
+
         Spacelift.task(arquillian, XmlUpdater).file(arquillianXml).execute().await()
     }
 
@@ -150,10 +154,10 @@ class ArquillianXmlUpdater extends Task<Object, Void>{
         extensions.each { extensionQualifier ->
             log.debug("Modifying Arquillian extension \"${extensionQualifier}\" configuration(s) at ${arquillianXml}")
 
-            arquillian.extension.findAll {e -> e.@qualifier == "${extensionQualifier}"}.each { extension ->
+            arquillian.extension.findAll { e -> e.@qualifier == "${extensionQualifier}" }.each { extension ->
                 properties.each { key, value ->
                     // remove existing property
-                    extension.property.findAll { p -> p.@name == "${key}"}.each { it.replaceNode {} }
+                    extension.property.findAll { p -> p.@name == "${key}" }.each { it.replaceNode {} }
                     // put new property
                     extension.append(new Node(null, 'property', [name: "${key}"], "${value}"))
                 }

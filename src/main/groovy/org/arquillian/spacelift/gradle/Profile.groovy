@@ -2,8 +2,6 @@ package org.arquillian.spacelift.gradle
 
 import groovy.transform.CompileStatic
 import org.arquillian.spacelift.gradle.configuration.ConfigurationContainer
-import org.arquillian.spacelift.gradle.configuration.ConfigurationItem
-import org.gradle.api.Project
 
 // this class represents a profile enumerating installations to be installed
 
@@ -42,20 +40,20 @@ class Profile extends BaseContainerizableObject<Profile> implements Containeriza
     }
 
     @Override
-    public Profile clone(String name) {
-        return new Profile(name, this)
+    Profile clone(String name) {
+        new Profile(name, this)
     }
 
     List<String> getEnabledInstallations() {
-        return enabledInstallations.resolve()
+        enabledInstallations.resolve()
     }
 
     List<String> getTests() {
-        return tests.resolve()
+        tests.resolve()
     }
 
     List<String> getExcludedTests() {
-        return excludedTests.resolve()
+        excludedTests.resolve()
     }
 
     @Override
@@ -83,6 +81,6 @@ class Profile extends BaseContainerizableObject<Profile> implements Containeriza
             sb.append(it).append(" ")
         }
 
-        return sb.toString()
+        sb.toString()
     }
 }

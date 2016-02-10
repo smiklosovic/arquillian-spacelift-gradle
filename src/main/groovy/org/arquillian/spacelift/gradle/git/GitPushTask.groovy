@@ -1,24 +1,25 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
- * By default it pushes to "{@literal origin :.}". You can override this by {@link #remote(String) and {@link # branch ( String )}.
+ * By default it pushes to "{@literal origin :.}". You can override this by {@link GitPushTask#remote(String)} and
+ * {@link GitPushTask#branch(String)}.
  * methods.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitPushTool extends Task<File, File> {
+class GitPushTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitPushTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitPushTask)
 
     private String remote = "origin"
 
@@ -32,9 +33,9 @@ class GitPushTool extends Task<File, File> {
      * By default set to "origin". Null values and empty strings are not taken into consideration.
      *
      * @param remote
-     * @return
+     * @return this
      */
-    GitPushTool remote(String remote) {
+    GitPushTask remote(String remote) {
         if (notNullAndNotEmpty(remote)) {
             this.remote = remote
         }
@@ -45,9 +46,9 @@ class GitPushTool extends Task<File, File> {
      * By default set to ":". Null values and empty strings are not taken into consideration.
      *
      * @param branch
-     * @return
+     * @return this
      */
-    GitPushTool branch(String branch) {
+    GitPushTask branch(String branch) {
         if (notNullAndNotEmpty(branch)) {
             this.branch = branch
         }
@@ -57,9 +58,9 @@ class GitPushTool extends Task<File, File> {
     /**
      * Pushes tags as well.
      *
-     * @return
+     * @return this
      */
-    GitPushTool tags() {
+    GitPushTask tags() {
         tags = true
         this
     }
@@ -67,9 +68,9 @@ class GitPushTool extends Task<File, File> {
     /**
      *
      * @param gitSsh file to use as GIT_SSH script, skipped when it does not exist, it is not a file or is a null object
-     * @return
+     * @return this
      */
-    GitPushTool gitSsh(File gitSsh) {
+    GitPushTask gitSsh(File gitSsh) {
         if (gitSsh && gitSsh.exists() && gitSsh.isFile() && gitSsh.canExecute()) {
             this.gitSsh = gitSsh
         }
@@ -99,7 +100,7 @@ class GitPushTool extends Task<File, File> {
             push.execute().await()
         } catch (ExecutionException ex) {
             throw new ExecutionException(
-            ex, "Could not push {0} to {1} using command {2}.", branch, remote, command.toString())
+                    ex, "Could not push {0} to {1} using command {2}.", branch, remote, command.toString())
         }
 
         repositoryDir

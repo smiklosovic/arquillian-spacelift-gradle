@@ -46,11 +46,11 @@ class ConfigurationItem<T> extends BaseContainerizableObject<ConfigurationItem<T
     }
 
     boolean isSet() {
-        return set
+        set
     }
 
     boolean isConverterSet() {
-        return converterSet
+        converterSet
     }
 
     T getValue() {
@@ -60,14 +60,12 @@ class ConfigurationItem<T> extends BaseContainerizableObject<ConfigurationItem<T
         } else {
             output = defaultValue
         }
-        return output.resolve() //DeferredValue.of(type.resolve()).from(output.resolve()).ownedBy(output.getOwner()).resolve()
+
+        output.resolve()
     }
 
     @Override
     ConfigurationItem<T> clone(String name) {
-        return null
+        null
     }
-
-// jbossHome type: File, description: "Hello", defaultValue: new File()
-
 }

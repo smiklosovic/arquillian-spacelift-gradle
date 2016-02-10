@@ -1,15 +1,14 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
-import org.gradle.api.Project
 import org.arquillian.spacelift.gradle.configuration.BuiltinConfigurationItemConverters
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
 class DefaultTestExecutionLifecycleTest {
@@ -20,12 +19,19 @@ class DefaultTestExecutionLifecycleTest {
     @Test
     void "all phases should execute twice when dataProvider returns an array with two items"() {
         runAsSpaceliftTest {
-
             def counter = 0
-            def value = { if(counter<3) { counter++; return "first" } else return "second" }
+
+            def value = {
+                if (counter < 3) {
+                    counter++
+                    return "first"
+                } else {
+                    return "second"
+                }
+            }
 
             dataProvider { ["first", "second"] }
-            beforeSuite { }
+            beforeSuite {}
             beforeTest { data ->
                 assertThat data, is(value())
             }
@@ -35,7 +41,7 @@ class DefaultTestExecutionLifecycleTest {
             afterTest { data ->
                 assertThat data, is(value())
             }
-            afterSuite { }
+            afterSuite {}
         }
     }
 
@@ -44,10 +50,17 @@ class DefaultTestExecutionLifecycleTest {
         runAsSpaceliftTest {
 
             def counter = 0
-            def value = { if(counter<3) { counter++; return "first" } else return "second" }
+            def value = {
+                if (counter < 3) {
+                    counter++
+                    return "first"
+                } else {
+                    return "second"
+                }
+            }
 
             dataProvider { "first,second".split(",") }
-            beforeSuite { }
+            beforeSuite {}
             beforeTest { data ->
                 assertThat data, is(value())
             }
@@ -57,7 +70,7 @@ class DefaultTestExecutionLifecycleTest {
             afterTest { data ->
                 assertThat data, is(value())
             }
-            afterSuite { }
+            afterSuite {}
         }
     }
 
@@ -66,7 +79,6 @@ class DefaultTestExecutionLifecycleTest {
         Project project = ProjectBuilder.builder().build()
 
         project.ext.array = '["second", "first"]'
-
 
         project.apply plugin: 'org.arquillian.spacelift'
 
@@ -85,13 +97,20 @@ class DefaultTestExecutionLifecycleTest {
             tests {
                 foo {
                     def counter = 0
-                    def value = { if(counter<3) { counter++; return "second" } else return "first" }
+                    def value = {
+                        if (counter < 3) {
+                            counter++;
+                            return "second"
+                        } else {
+                            return "first"
+                        }
+                    }
 
                     dataProvider {
                         println array
                         return array
                     }
-                    beforeSuite { }
+                    beforeSuite {}
                     beforeTest { data ->
                         assertThat data, is(value())
                     }
@@ -101,7 +120,7 @@ class DefaultTestExecutionLifecycleTest {
                     afterTest { data ->
                         assertThat data, is(value())
                     }
-                    afterSuite { }
+                    afterSuite {}
                 }
             }
         }
@@ -137,10 +156,17 @@ class DefaultTestExecutionLifecycleTest {
             tests {
                 foo {
                     def counter = 0
-                    def value = { if(counter<3) { counter++; return "first" } else return "second" }
+                    def value = {
+                        if (counter < 3) {
+                            counter++
+                            return "first"
+                        } else {
+                            return "second"
+                        }
+                    }
 
                     dataProvider { array }
-                    beforeSuite { }
+                    beforeSuite {}
                     beforeTest { data ->
                         assertThat data, is(value())
                     }
@@ -150,7 +176,7 @@ class DefaultTestExecutionLifecycleTest {
                     afterTest { data ->
                         assertThat data, is(value())
                     }
-                    afterSuite { }
+                    afterSuite {}
                 }
             }
         }
@@ -199,8 +225,6 @@ class DefaultTestExecutionLifecycleTest {
                 throw new IllegalArgumentException("Random test error.")
             }
         }
-
-
     }
 
     @Test

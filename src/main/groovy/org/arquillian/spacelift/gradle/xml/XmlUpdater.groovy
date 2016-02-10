@@ -6,9 +6,9 @@ import org.gradle.api.AntBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class XmlUpdater extends Task<Object, File>{
+class XmlUpdater extends Task<Object, File> {
 
-    protected static final Logger log = LoggerFactory.getLogger('Xml')
+    protected static final Logger log = LoggerFactory.getLogger(XmlUpdater)
 
     def static backupCounter = 0
 
@@ -27,7 +27,7 @@ class XmlUpdater extends Task<Object, File>{
     @Override
     protected File process(Object xml) throws Exception {
         // backup previous configuration
-        ant.copy(file: "${file}", tofile: "${file}.backup${++backupCounter}")
+        //ant.copy(file: "${file}", tofile: "${file}.backup${++backupCounter}")
 
         file.withPrintWriter("UTF-8") { writer ->
             def printer = new XmlNodePrinter(writer, '    ');
@@ -35,6 +35,6 @@ class XmlUpdater extends Task<Object, File>{
             printer.print(xml)
         }
 
-        return file
+        file
     }
 }

@@ -17,7 +17,7 @@ class JavaExecutor extends Task<Object, Void> {
         this
     }
 
-    JavaExecutor parameters(CharSequence...parameters) {
+    JavaExecutor parameters(CharSequence... parameters) {
         this.parameters.addAll(parameters)
         this
     }
@@ -37,7 +37,7 @@ class JavaExecutor extends Task<Object, Void> {
 
         def command = Spacelift.task('java')
 
-        if(workingDir) {
+        if (workingDir) {
             command.workingDir(workingDir)
         }
 

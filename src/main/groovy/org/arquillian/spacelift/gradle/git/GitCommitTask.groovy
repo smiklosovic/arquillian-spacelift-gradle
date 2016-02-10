@@ -1,13 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Commits changes to repository.
@@ -15,18 +15,18 @@ import org.arquillian.spacelift.task.os.CommandTool
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitCommitTool extends Task<File, File> {
+class GitCommitTask extends Task<File, File> {
 
-    private Logger logger = Logger.getLogger(GitCommitTool.class.getName())
+    private Logger logger = LoggerFactory.getLogger(GitCommitTask)
 
     private String message = "<unknown>"
 
     /**
      *
      * @param message commit message, by default '{@literal <unknown>}'. Null values and empty strings are not taken into consideration.
-     * @return
+     * @return this
      */
-    GitCommitTool message(String message) {
+    GitCommitTask message(String message) {
         if (notNullAndNotEmpty(message)) {
             this.message = message
         }

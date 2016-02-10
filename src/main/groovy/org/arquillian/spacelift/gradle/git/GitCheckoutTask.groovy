@@ -1,25 +1,25 @@
 package org.arquillian.spacelift.gradle.git
 
-import java.util.logging.Logger
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
-import org.arquillian.spacelift.process.Command
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.task.Task
 import org.arquillian.spacelift.task.os.CommandTool
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
- * Checkouts some branch. If {@link #checkout(String)} is not called, it is checked out to master.
+ * Checkouts some branch. If {@link GitCheckoutTask#checkout(String)} is not called, it is checked out to master.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-class GitCheckoutTool extends Task<File, File> {
+class GitCheckoutTask extends Task<File, File> {
 
-    private static Logger logger = Logger.getLogger(GitCheckoutTool.class.getName())
+    private static Logger logger = LoggerFactory.getLogger(GitCheckoutTask)
 
     String branch = "master"
+
     boolean force = false
 
     /**
@@ -27,16 +27,16 @@ class GitCheckoutTool extends Task<File, File> {
      * @param branch , branch to check out, it is skipped when it is null object or it is empty string.
      * @return
      */
-    GitCheckoutTool checkout(String branch) {
+    GitCheckoutTask checkout(String branch) {
         if (notNullAndNotEmpty(branch)) {
             this.branch = branch
         }
-        return this
+        this
     }
 
-    GitCheckoutTool force() {
+    GitCheckoutTask force() {
         this.force = true
-        return this
+        this
     }
 
     @Override
@@ -46,7 +46,7 @@ class GitCheckoutTool extends Task<File, File> {
                 .parameter("checkout")
                 .parameter(branch)
 
-        if(force) {
+        if (force) {
             command.parameter('--force')
         }
 

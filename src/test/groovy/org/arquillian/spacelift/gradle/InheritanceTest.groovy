@@ -1,15 +1,13 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Rule;
+import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException;
+import org.junit.rules.ExpectedException
 
-import org.arquillian.spacelift.gradle.SpaceliftPlugin
+import static org.hamcrest.CoreMatchers.*
+import static org.junit.Assert.assertThat
 
 class InheritanceTest {
 

@@ -9,21 +9,21 @@ import org.slf4j.LoggerFactory
 /**
  * Helper class that will clean up environment by killing all processes that might collide with test execution
  */
-class KillJavas extends Task<Object, Void>{
+class KillJavas extends Task<Object, Void> {
+
     def static final log = LoggerFactory.getLogger('Killer')
 
     // definition of what would be killed
     def processNames = [
-        "org.jboss.Main",
-        "org.jboss.as",
-        "jboss-modules.jar",
-        "surefire",
-        "Selenium",
-        "selenium-server-standalone"
+            "org.jboss.Main",
+            "org.jboss.as",
+            "jboss-modules.jar",
+            "surefire",
+            "Selenium",
+            "selenium-server-standalone"
     ]
 
     def processPorts = [4444, 14444, 8080, 9999]
-
 
     @Override
     protected Void process(Object input) throws Exception {
@@ -42,7 +42,7 @@ class KillJavas extends Task<Object, Void>{
                 }
 
                 // wait for process to finish if not forced kill
-                if(signal == "-SIGTERM" && totalKilled) {
+                if (signal == "-SIGTERM" && totalKilled) {
                     sleep 10000
                 }
             }
@@ -68,13 +68,13 @@ class KillJavas extends Task<Object, Void>{
 
         def pids = executeBash("jps -l").inject(new ArrayList()) { list, line ->
             def m = line =~ JPS_PATTERN
-            if(m) {
+            if (m) {
                 list << m[0][1]
             }
             list
         }
 
-        def totalKilled = pids.inject(0) {total, pid ->
+        def totalKilled = pids.inject(0) { total, pid ->
             kill(pid, signal)
             total++
         }
@@ -88,13 +88,13 @@ class KillJavas extends Task<Object, Void>{
         // for some reason injecting [] does not work
         def pids = executeBash("netstat -a -n -p").inject(new ArrayList()) { list, line ->
             def m = line =~ NETSTAT_PATTERN
-            if(m) {
+            if (m) {
                 list << m[0][1]
             }
             list
         }
 
-        def totalKilled = pids.inject(0) {total, pid ->
+        def totalKilled = pids.inject(0) { total, pid ->
             kill(pid, signal)
             total++
         }
@@ -106,8 +106,7 @@ class KillJavas extends Task<Object, Void>{
 
         if (!SystemUtils.IS_OS_WINDOWS) {
             executeBash("kill ${signal} ${pid}")
-        }
-        else {
+        } else {
             executeCmd("taskkill /F /T /PID ${pid}")
         }
 

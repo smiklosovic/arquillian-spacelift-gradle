@@ -3,56 +3,79 @@ package org.arquillian.spacelift.gradle.configuration
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
-import groovy.transform.CompileStatic
 
 /**
  * Created by tkriz on 25/03/15.
  */
 class BuiltinConfigurationItemConverters {
 
-    private static
-    final Map<Class<?>, ConfigurationItemConverter<?>> BUILTIN_CONVERTERS =
-            (Map<Class<?>, ConfigurationItemConverter<?>>) [
-                    (Boolean)     : new SimpleConfigurationItemConverter<Boolean>() {
+    private static final Map<Class<?>, ConfigurationItemConverter<?>> BUILTIN_CONVERTERS =
+            new HashMap<Class<?>, ConfigurationItemConverter<?>>() {
+                {
+
+                    put(Boolean, new SimpleConfigurationItemConverter<Boolean>() {
                         @Override
                         Boolean fromString(String value) throws ConversionException {
-                            return Boolean.valueOf(value)
+                            Boolean.valueOf(value)
                         }
-                    },
-                    (Byte)        : new SimpleConfigurationItemConverter<Byte>() {
+                    })
+
+                    put(Byte, new SimpleConfigurationItemConverter<Byte>() {
                         @Override
                         Byte fromString(String value) throws ConversionException {
-                            return Byte.valueOf(value)
+                            try {
+                                Byte.valueOf(value)
+                            } catch (Exception ex) {
+                                throw new ConversionException("Unable to convert $value to Byte.", ex)
+                            }
                         }
-                    },
-                    (Short)       : new SimpleConfigurationItemConverter<Short>() {
+                    })
+
+                    put(Short, new SimpleConfigurationItemConverter<Short>() {
                         @Override
                         Short fromString(String value) throws ConversionException {
-                            return Short.valueOf(value)
+                            try {
+                                Short.valueOf(value)
+                            } catch (Exception ex) {
+                                throw new ConversionException("Unable to convert $value to Short.", ex)
+                            }
                         }
-                    },
-                    (Integer)     : new SimpleConfigurationItemConverter<Integer>() {
+                    })
+
+                    put(Integer, new SimpleConfigurationItemConverter<Integer>() {
                         @Override
                         Integer fromString(String value) throws ConversionException {
-                            return Integer.valueOf(value)
+                            try {
+                                Integer.valueOf(value)
+                            } catch (Exception ex) {
+                                throw new ConversionException("Unable to convert $value to Integer.", ex)
+                            }
                         }
-                    },
-                    (Long)        : new SimpleConfigurationItemConverter<Long>() {
+                    })
+
+                    put(Long, new SimpleConfigurationItemConverter<Long>() {
                         @Override
                         Long fromString(String value) throws ConversionException {
-                            return Long.valueOf(value)
+                            try {
+                                Long.valueOf(value)
+                            } catch (Exception ex) {
+                                throw new ConversionException("Unable to convert $value to Long.", ex)
+                            }
                         }
-                    },
-                    (CharSequence): new SimpleConfigurationItemConverter<CharSequence>() {
+                    })
+
+                    put(CharSequence, new SimpleConfigurationItemConverter<CharSequence>() {
                         @Override
                         CharSequence fromString(String value) throws ConversionException {
-                            return value
+                            value
                         }
-                    },
-                    (String)      : new StringConfigurationItemConverter(),
-                    (Class)       : new ClassConfigurationItemConverter(),
-                    (File)        : new FileConfigurationItemConverter()
-            ]
+                    })
+
+                    put(String, new StringConfigurationItemConverter())
+                    put(Class, new ClassConfigurationItemConverter())
+                    put(File, new FileConfigurationItemConverter())
+                }
+            }
 
     static <T> ConfigurationItemConverter<T> getConverter(Class<T> type) {
         if (type.isArray()) {
@@ -62,15 +85,14 @@ class BuiltinConfigurationItemConverters {
 
         ConfigurationItemConverter<T> converter = BUILTIN_CONVERTERS.get(type) as ConfigurationItemConverter<T>
 
-        if (converter == null) {
+        if (!converter) {
             throw new RuntimeException("No suitable converter found for type: $type.")
-        } else {
-            return converter
         }
+
+        converter
     }
 
-    static class ArrayConfigurationItemConverter<CONVERTED_TYPE>
-            implements ConfigurationItemConverter<CONVERTED_TYPE[]> {
+    static class ArrayConfigurationItemConverter<CONVERTED_TYPE> implements ConfigurationItemConverter<CONVERTED_TYPE[]> {
 
         private final ConfigurationItemConverter<CONVERTED_TYPE> valueConverter
 
@@ -85,16 +107,19 @@ class BuiltinConfigurationItemConverters {
             array.each {
                 output.add(valueConverter.fromString(it.getAsString()))
             }
-            return output.toArray() as CONVERTED_TYPE[]
+
+            output.toArray() as CONVERTED_TYPE[]
         }
 
         @Override
         String toString(CONVERTED_TYPE[] value) {
             def jsonArray = new JsonArray()
+
             value.each { CONVERTED_TYPE element ->
                 jsonArray.add(new JsonPrimitive(valueConverter.toString(element)))
             }
-            return jsonArray.toString()
+
+            jsonArray.toString()
         }
     }
 
@@ -103,19 +128,20 @@ class BuiltinConfigurationItemConverters {
 
         @Override
         String toString(CONVERTED_TYPE value) {
-            return value.toString()
+            value.toString()
         }
     }
 
     static class StringConfigurationItemConverter implements ConfigurationItemConverter<String> {
+
         @Override
         String fromString(String value) throws ConversionException {
-            return value
+            value
         }
 
         @Override
         String toString(String value) {
-            return value
+            value
         }
     }
 
@@ -123,12 +149,16 @@ class BuiltinConfigurationItemConverters {
 
         @Override
         Class<?> fromString(String value) throws ConversionException {
-            return Class.forName(value)
+            try {
+                Class.forName(value)
+            } catch (Exception ex) {
+                throw new ConversionException(String.format("Unable to convert $value to Class"), ex)
+            }
         }
 
         @Override
         String toString(Class<?> value) {
-            return value.getName()
+            value.getName()
         }
     }
 
@@ -136,13 +166,16 @@ class BuiltinConfigurationItemConverters {
 
         @Override
         File fromString(String value) throws ConversionException {
-            return new File(value)
+            try {
+                new File(value)
+            } catch (Exception ex) {
+                throw new ConversionException(String.format("Unable to convert $value to File."), ex)
+            }
         }
 
         @Override
         String toString(File value) {
-            return value.path
+            value.path
         }
     }
-
 }

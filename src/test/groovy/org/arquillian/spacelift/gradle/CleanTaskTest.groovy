@@ -1,14 +1,11 @@
 package org.arquillian.spacelift.gradle
 
-import static org.junit.Assert.*
-import static org.hamcrest.CoreMatchers.*
-
-import org.junit.Ignore;
-import org.junit.Test
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Test
 
-import java.io.File
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
 
 
 class CleanTaskTest {

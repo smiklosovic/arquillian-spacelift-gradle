@@ -1,7 +1,6 @@
 package org.arquillian.spacelift.gradle
 
 import groovy.transform.CompileStatic
-
 import org.slf4j.Logger
 
 @CompileStatic
@@ -25,6 +24,8 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
 
     /**
      * Cloning constructor. Preserves lazy nature of closures to be evaluated later on.
+     *
+     * @param testName name of  the test
      * @param other Test to be cloned
      */
     DefaultTest(String testName, DefaultTest other) {
@@ -39,8 +40,8 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
     }
 
     @Override
-    public DefaultTest clone(String name) {
-        return new DefaultTest(name, this);
+    DefaultTest clone(String name) {
+        new DefaultTest(name, this);
     }
 
     @Override
@@ -51,7 +52,7 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
             logger.info(":test:${name} before suite execution")
             beforeSuite.resolve()
         }
-        catch(Exception e) {
+        catch (Exception e) {
             logger.error(":test:${name} failed before suite phase: ${e.getMessage()}")
             throw e
         }
@@ -63,13 +64,13 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
             // iterate through beforeTest, execute and afterTest based on data provider
             dataProvider.resolve().each { data ->
 
-                String dataString =  data ? " (${data})" : ""
+                String dataString = data ? " (${data})" : ""
 
                 try {
                     logger.info(":test:${name} before test execution${dataString}")
                     beforeTest.resolveWith(this, data)
                 }
-                catch(Exception e) {
+                catch (Exception e) {
                     logger.error(":test:${name} failed before test phase: ${e.getMessage()}")
                     throw e
                 }
@@ -79,7 +80,7 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
                     logger.invokeMethod("lifecycle", ":test:${name}${dataString}")
                     execute.resolveWith(this, data)
                 }
-                catch(Exception e) {
+                catch (Exception e) {
                     logger.error(":test:${name} failed execute phase: ${e.getMessage()}")
                     cause = e
                 }
@@ -89,13 +90,13 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
                         logger.info(":test:${name} after test execution${dataString}")
                         afterTest.resolveWith(this, data)
                     }
-                    catch(Exception e) {
+                    catch (Exception e) {
                         logger.error(":test:${name} failed after test phase: ${e.getMessage()}")
-                        if(cause==null) {
+                        if (cause == null) {
                             cause = e
                         }
                     }
-                    if(cause) {
+                    if (cause) {
                         throw cause
                     }
                 }
@@ -106,14 +107,14 @@ class DefaultTest extends BaseContainerizableObject<DefaultTest> implements Test
                 logger.info(":test:${name} after suite execution")
                 afterSuite.resolve()
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 logger.error(":test:${name} failed after suite phase: ${e.getMessage()}")
-                if(cause==null) {
+                if (cause == null) {
                     cause = e
                 }
             }
             finally {
-                if(cause) {
+                if (cause) {
                     throw cause
                 }
             }

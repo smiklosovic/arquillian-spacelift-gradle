@@ -1,8 +1,5 @@
 package org.arquillian.spacelift.gradle.maven
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.gradle.GradleSpaceliftDelegate
 import org.arquillian.spacelift.gradle.utils.EnvironmentUtils
@@ -12,6 +9,10 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assume
 import org.junit.Test
 
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.junit.Assert.assertThat
+
 class MavenExecutorTest {
 
     @Test
@@ -19,7 +20,6 @@ class MavenExecutorTest {
 
         Assume.assumeThat EnvironmentUtils.runsOnLinux(), is(true)
         def maven = instantiateSimpleProjectWithMavenExecutor()
-
 
         ProcessResult result = maven.env("HEY_SPACELIFT", "'This is plugin!'").goal("help:system").execute().await()
         assertThat result.output().find { line -> line.contains("HEY_SPACELIFT")}, is(notNullValue())

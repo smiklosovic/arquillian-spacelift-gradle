@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat
 class MavenSettingsTest {
 
     @Test
-    public void loadBackupSettingsXml() {
+    void loadBackupSettingsXml() {
         File file = File.createTempFile("settings.xml", "-spacelift");
         this.getClass().getResource("/settings.xml-template").withInputStream { ris ->
             file.withOutputStream { fos -> fos << ris }
@@ -21,9 +21,9 @@ class MavenSettingsTest {
         assertThat file.exists(), is(true)
         assertThat file.text, containsString("settings")
     }
-    
+
     @Test
-    public void profilesWithoutTests() {
+    void profilesWithoutTests() {
         Project testProject = ProjectBuilder.builder().build()
 
         testProject.apply plugin: 'org.arquillian.spacelift'
@@ -33,10 +33,10 @@ class MavenSettingsTest {
                 rhc { command "rhc" }
             }
             profiles {
-                foobar { enabledInstallations ["eap"] }
+                foobar { enabledInstallations["eap"] }
             }
             installations {
-                maven(from:MavenInstallation) {
+                maven(from: MavenInstallation) {
                     alias "mymvn"
                 }
             }

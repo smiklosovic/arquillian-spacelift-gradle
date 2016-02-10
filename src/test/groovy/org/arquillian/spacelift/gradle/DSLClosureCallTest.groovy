@@ -1,16 +1,13 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import org.slf4j.Logger
 
-import org.arquillian.spacelift.gradle.SpaceliftPlugin
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
 
 class DSLClosureCallTest {
 
@@ -50,7 +47,7 @@ class DSLClosureCallTest {
         project.spacelift {
             tests {
                 def counter = 0
-                def value = { return "foo" + (++counter)}
+                def value = { return "foo" + (++counter) }
 
                 firstTest(from:MyOwnTestDefinition) {
                     myDSL {

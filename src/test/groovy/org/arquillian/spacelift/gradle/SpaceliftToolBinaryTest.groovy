@@ -1,8 +1,5 @@
 package org.arquillian.spacelift.gradle
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.assertThat
-
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.process.CommandBuilder
 import org.arquillian.spacelift.process.ProcessResult
@@ -11,6 +8,9 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assume
 import org.junit.Test
 
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.junit.Assert.assertThat
 
 // NOTE some of these tests might not work in IDE
 class SpaceliftToolBinaryTest {
