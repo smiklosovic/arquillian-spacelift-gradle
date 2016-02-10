@@ -1,0 +1,9 @@
+language: java
+sudo: false
+jdk:
+    - oraclejdk8
+branches:
+    except:    
+        - /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
+script:
+    - ./gradlew test --stacktrace
