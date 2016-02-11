@@ -9,25 +9,14 @@ In order to enable the plugin, define:
 ----
 buildscript {
   repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
+    maven { url "https://jitpack.io" }
   }
   dependencies {
-    classpath "gradle.plugin.org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-15"
+    classpath 'com.github.smiklosovic:arquillian-spacelift-gradle:1.0.0.Final'
   }
 }
 
 apply plugin: "org.arquillian.spacelift"
-----
-
-Alternatively, you can use https://gradle.org/docs/current/userguide/plugins.html[incubating Gradle plugin DSL]:
-
-[source,groovy]
-----
-plugins {
-  id "org.arquillian.spacelift" version "1.0.0-alpha-15"
-}
 ----
 
 == Spacelift Tasks
@@ -358,25 +347,14 @@ You can benefit from following tools and tasks, either from Spacelift itself or 
 * DownloadTool - downloads a file
 * UnzipTool - extracts a zip file
 * CommandTool - executes external command
-* AntExecutor - executes Ant command. Requires _ant_ tool
 * MavenExecutor - executes Maven command. Requires _mvn_ tool
 * JavaExecutor - executes Java command. Requires _java_ tool
 * XmlFileLoader - loads xml from file into +Node+
 * XmlTextLoader - loads xml from text into +Node+
 * XmlUpdater - stores +Node+ into file
 * ArquillianXmlUpdater - updates container and/or extension properties in _arquillian.xml_ files
-* PomXmlUpdater - updates properties in _pom.xml_ files
 * SettingsXmlUpdater - updates _settings.xml_ with additional repositories, sets +localRepository+
 * KillJavas - kills running Java processes (Selenium, JBoss AS/WildFly containers) and processes occupying ports
-* StandaloneXmlUpdater - allows to add keystore/truststore configuration to _standalone.xml_
-* DomainXmlUpdater - allows to add keystore/truststore configuration to _domain.xml_
-* AndroidSdkUpdater - allows to fetch binaries for specific Android SDK target - you need to agree with Android SDK license first. Requires _android_ tool.
-* AndroidSdkOptForStats - allows to opt out for stats - you need to agree with Android SDK license first
-* AndroidEmulatorStarter - starts Android emulator
-* AndroidEmulatorStopper - stops Android emulator
-* AVDCreator - creates Android Virtual Devices
-* CordovaExecutor - executes Cordova commands
-* RHELVersion - determines version of RHEL system
 
 == Release new version
 
