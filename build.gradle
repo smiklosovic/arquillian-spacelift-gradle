@@ -43,7 +43,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.1'
 
     // Spacelift abstracts execution of external commands
-    compile 'org.arquillian.spacelift:arquillian-spacelift:1.0.0.Alpha8'
+    compile 'org.arquillian.spacelift:arquillian-spacelift:1.0.0.Alpha9'
 
     // FIXME manually include ShrinkWrap Resolver Depchain as pom typed import does not play well with Gradle and Eclipse
     compile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api:2.1.1'
