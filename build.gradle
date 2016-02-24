@@ -5,7 +5,7 @@ apply plugin: 'maven-publish'
 apply plugin: "com.gradle.plugin-publish"
 
 group 'net.miklosovic.spacelift.gradle'
-version '1.0.1.Final'
+version '1.0.2.Final'
 
 allprojects {
     tasks.withType(JavaCompile) { 
