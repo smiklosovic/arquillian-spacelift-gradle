@@ -2,6 +2,7 @@
 /bin
 /.gradle
 /workspace
+/classes
 
 .checkstyle
 .classpath

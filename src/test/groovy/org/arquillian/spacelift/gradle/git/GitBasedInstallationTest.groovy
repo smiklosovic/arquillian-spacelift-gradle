@@ -1,11 +1,13 @@
 package org.arquillian.spacelift.gradle.git
 
+import org.apache.commons.io.FileUtils
 import org.arquillian.spacelift.Spacelift
 import org.arquillian.spacelift.execution.ExecutionException
 import org.arquillian.spacelift.gradle.Installation
 import org.arquillian.spacelift.gradle.SpaceliftPlugin
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -13,11 +15,17 @@ import org.junit.rules.ExpectedException
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.junit.Assert.assertThat
+import static org.junit.Assert.assertTrue
 
 class GitBasedInstallationTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    @After
+    public void teardown() {
+        FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir"), "absoluteRepositoryTest"))
+    }
 
     @Test
     void "install from commit and master"() {
@@ -31,7 +39,7 @@ class GitBasedInstallationTest {
 
                 def counter = 0
 
-                theCommit(from:GitBasedInstallation) {
+                theCommit(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit '15b1d748935a58ea0f583a4d21531e854e6c382a'
                     home "smikloso-test"
@@ -39,7 +47,7 @@ class GitBasedInstallationTest {
                         counter++
                     }
                 }
-                theMaster(from:GitBasedInstallation) {
+                theMaster(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit 'master'
                     home "smikloso-test"
@@ -47,7 +55,7 @@ class GitBasedInstallationTest {
                         counter++
                     }
                 }
-                theCommitAgain(from:GitBasedInstallation) {
+                theCommitAgain(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit '15b1d748935a58ea0f583a4d21531e854e6c382a'
                     home "smikloso-test"
@@ -56,12 +64,22 @@ class GitBasedInstallationTest {
                     }
                 }
                 // we need to end up with different commit than we've started
-                theMasterAgain(from:GitBasedInstallation) {
+                theMasterAgain(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit 'master'
                     home "smikloso-test"
                     postActions {
-                        assertThat counter, is(3)
+                        counter++
+                    }
+                }
+                absoluteRepositoryTest(from: GitBasedInstallation) {
+                    repository "https://github.com/smiklosovic/test.git"
+                    commit 'master'
+                    home new File(System.getProperty("java.io.tmpdir"), "absoluteRepositoryTest").absolutePath
+                    postActions {
+                        assertThat counter, is(4)
+                        File repositoryFile = new File(System.getProperty("java.io.tmpdir"), "absoluteRepositoryTest")
+                        assertTrue repositoryFile.exists()
                     }
                 }
             }
@@ -86,7 +104,7 @@ class GitBasedInstallationTest {
 
                 def counter = 0
 
-                installedInstallation(from:GitBasedInstallation) {
+                installedInstallation(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit 'master'
                     home "whatever"
@@ -97,7 +115,7 @@ class GitBasedInstallationTest {
                         }
                     }
                 }
-                nonInstalledInstallation(from:GitBasedInstallation) {
+                nonInstalledInstallation(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit 'master'
                     home "whatever2"
@@ -126,9 +144,9 @@ class GitBasedInstallationTest {
         project.apply plugin: 'org.arquillian.spacelift'
 
         project.spacelift {
-            workspace {new File(System.getProperty("user.dir"), "workspace") }
+            workspace { new File(System.getProperty("user.dir"), "workspace") }
             installations {
-                theCommit(from:GitBasedInstallation) {
+                theCommit(from: GitBasedInstallation) {
                     repository "https://github.com/smiklosovic/test.git"
                     commit 'does-not-exist'
                     home "smikloso-test-should-fail"

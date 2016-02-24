@@ -191,9 +191,17 @@ class DeferredValue<TYPE> {
         // cast to String if this is different implementation
         else if (retVal != null && retVal instanceof CharSequence && type == String.class) {
             return (TYPE) retVal.toString()
-        }
-        // cast String to a File location in workspace
-        else if (File.class.isAssignableFrom(type) && retVal != null && retVal instanceof CharSequence) {
+        // cast String to a File location in workspace in case it is relative file
+        // absoulte path will be resolved to absoulute file, possibly having installations outside of workspace
+        // this is very handy e.g. for Git-based installations already living outside of workspace
+        } else if (File.class.isAssignableFrom(type) && retVal != null && retVal instanceof CharSequence) {
+
+            File file = new File(retVal.toString())
+
+            if (file.isAbsolute()) {
+                return file
+            }
+
             return new File(new GradleSpaceliftDelegate().project()['spacelift']['workspace'], retVal.toString())
         }
         // cast String to a URL location
