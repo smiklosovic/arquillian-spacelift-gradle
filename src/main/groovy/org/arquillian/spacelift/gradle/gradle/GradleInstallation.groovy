@@ -141,14 +141,12 @@ class GradleInstallation extends BaseContainerizableObject<GradleInstallation> i
                 windows: { return SystemUtils.IS_OS_WINDOWS },
                 mac    : { return SystemUtils.IS_OS_MAC_OSX },
                 linux  : { return SystemUtils.IS_OS_LINUX },
-                solaris: { return SystemUtils.IS_OS_SOLARIS || SystemUtils.IS_OS_SUN_OS },
         ]
 
         Map<String, List<String>> nativeCommand = [
+                windows: [ "${getPlatformSpecificHome(home)}/bin/gradle" ],
                 linux  : ["${home}/bin/gradle"],
                 mac    : ["${home}/bin/gradle"],
-                windows: ["cmd.exe", "/C", "${home}/bin/gradle.bat"],
-                solaris: ["${home}/bin/gradle"]
         ]
 
         GradleTool(File home) {
@@ -178,13 +176,36 @@ class GradleInstallation extends BaseContainerizableObject<GradleInstallation> i
         private Map<String, String> getGradleEnvironmentProperties() {
             Map<String, String> envProperties = new HashMap<String, String>()
 
-            envProperties.put("GRADLE_HOME", home)
+            String gradleHome = getPlatformSpecificHome(home)
+
+            envProperties.put("GRADLE_HOME", gradleHome)
             envProperties
         }
 
         @Override
         String toString() {
             "GradleTool (${commandBuilder})"
+        }
+
+        private def getPlatformSpecificHome(String home) {
+            boolean isRunningOnCygwin = Boolean.parseBoolean(System.getProperty("runningOnCygwin"));
+
+            if (!isRunningOnCygwin) {
+                return home
+            }
+
+            String disk = extractWindowsDisk(home)
+            String path = extractPath(home)
+
+            return "/cygwin/" + disk + path
+        }
+
+        private def extractWindowsDisk(String home) {
+            home.tokenize(":").get(0).toLowerCase()
+        }
+
+        private def extractPath(String home) {
+            home.tokenize(":").get(1).replaceAll("\\\\", "/")
         }
     }
 }
