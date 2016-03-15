@@ -144,7 +144,7 @@ class GradleInstallation extends BaseContainerizableObject<GradleInstallation> i
         ]
 
         Map<String, List<String>> nativeCommand = [
-                windows: [ "${getPlatformSpecificHome(home)}/bin/gradle" ],
+                windows: ["${getPlatformSpecificHome(home)}/bin/gradle"],
                 linux  : ["${home}/bin/gradle"],
                 mac    : ["${home}/bin/gradle"],
         ]
@@ -175,10 +175,7 @@ class GradleInstallation extends BaseContainerizableObject<GradleInstallation> i
 
         private Map<String, String> getGradleEnvironmentProperties() {
             Map<String, String> envProperties = new HashMap<String, String>()
-
-            String gradleHome = getPlatformSpecificHome(home)
-
-            envProperties.put("GRADLE_HOME", gradleHome)
+            envProperties.put("GRADLE_HOME", getPlatformSpecificHome(home))
             envProperties
         }
 
@@ -187,25 +184,19 @@ class GradleInstallation extends BaseContainerizableObject<GradleInstallation> i
             "GradleTool (${commandBuilder})"
         }
 
-        private def getPlatformSpecificHome(String home) {
-            boolean isRunningOnCygwin = Boolean.parseBoolean(System.getProperty("runningOnCygwin"));
-
-            if (!isRunningOnCygwin) {
+        private String getPlatformSpecificHome(String home) {
+            if (SystemUtils.IS_OS_UNIX) {
                 return home
+            } else if (SystemUtils.IS_OS_WINDOWS) {
+                return sanitizeWindowsPath(home)
+            } else {
+                throw new IllegalStateException("Unsupported platform.")
             }
-
-            String disk = extractWindowsDisk(home)
-            String path = extractPath(home)
-
-            return "/cygwin/" + disk + path
         }
 
-        private def extractWindowsDisk(String home) {
-            home.tokenize(":").get(0).toLowerCase()
-        }
-
-        private def extractPath(String home) {
-            home.tokenize(":").get(1).replaceAll("\\\\", "/")
+        // this is for git-bash shell
+        private def sanitizeWindowsPath(String home) {
+            home.replaceAll("\\\\", "/")
         }
     }
 }
