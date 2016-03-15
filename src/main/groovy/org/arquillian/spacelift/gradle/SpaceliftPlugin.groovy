@@ -17,6 +17,8 @@ class SpaceliftPlugin implements Plugin<Project> {
      */
     static void installInstallation(Installation installation, Logger logger) {
 
+        installation.registerTools(Spacelift.registry())
+
         if (installation.isInstalled()) {
             logger.lifecycle(":install:${installation.name} was already installed, registering tools")
         } else {
@@ -24,7 +26,6 @@ class SpaceliftPlugin implements Plugin<Project> {
             installation.install(logger)
             logger.lifecycle(":install:${installation.name} is now installed, registering tools")
         }
-        installation.registerTools(Spacelift.registry())
     }
 
     // this plugin prepares Arquillian Spacelift environment
