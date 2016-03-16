@@ -59,6 +59,8 @@ class ProcessTemplate extends Task<File, File> {
             template.writeTo(writer)
         }
 
+        output.deleteOnExit()
+
         return output
     }
 }
